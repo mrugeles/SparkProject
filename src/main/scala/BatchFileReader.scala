@@ -12,7 +12,7 @@ class BatchFileReader(sc: SparkContext){
     val textFile = sc.textFile(getClass.getResource("/users.csv").getPath)
   }
 
-  def getGenderCount(lines: RDD[String]): RDD[(String, Float)]  = {
+  def getGenderCount(lines: RDD[String]): RDD[(String, AnyVal)]  = {
 
     //ej: Array(('male', 45), ('female', 55))
     val gendersRDD = lines.map(
@@ -21,6 +21,21 @@ class BatchFileReader(sc: SparkContext){
         data(4)
       }
     )
+
+
+    val countPrep = gendersRDD.map(word=>(word, 1))
+    val counts = countPrep.reduceByKey((accumValue, newValue)=>accumValue + newValue)
+    val  total = lines.count()
+
+    val resultRDD = counts.map(
+      line =>{
+        val percentage: AnyVal = line._2*100/total
+        val data = line._1 + ": " + percentage + "%"
+//        println(data)
+        (line._1, percentage)
+      }
+    )
+    resultRDD.foreach{println}
 
     null
   }
