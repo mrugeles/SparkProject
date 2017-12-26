@@ -1,8 +1,31 @@
 
 package main
 
+import main.BatchFileReader.getClass
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkConf
+import org.apache.spark.rdd.RDD
+
+class BatchFileReader(sc: SparkContext){
+
+  def run() = {
+    val textFile = sc.textFile(getClass.getResource("/users.csv").getPath)
+  }
+
+  def getGenderCount(lines: RDD[String]): Array[(String, Float)]  = {
+
+    //ej: Array(('male', 45), ('female', 55))
+    val gendersRDD = lines.map(
+      line =>{
+        val data = line.split(",")
+        data(4)
+      }
+    )
+
+    null
+  }
+
+}
 
 object BatchFileReader {
   def main(args: Array[String]) {
@@ -12,8 +35,13 @@ object BatchFileReader {
       .setMaster("local[2]")
       .set("spark.executor.memory", "1g")
     val sc = new SparkContext(conf)
-    val textFile = sc.textFile(getClass.getResource("/users.csv").getPath)
+
+
+    val job = new BatchFileReader(sc)
+
+    job.run()
 //    val textfileMap = textFile.
+
 
     //val genderMap = textFile.flatMap(line=>line.split(","))
 
@@ -23,6 +51,7 @@ object BatchFileReader {
 //    val sortedCounts = counts.sortBy(kvPair=>kvPair._2, false)
 
 
-    textFile.saveAsTextFile("file:///PluralsightData/ReadMeWordCountViaApp")
+    //textFile.saveAsTextFile("file:///PluralsightData/ReadMeWordCountViaApp")
   }
+
 }
