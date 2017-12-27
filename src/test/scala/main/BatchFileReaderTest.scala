@@ -56,16 +56,16 @@ class BatchFileReaderTest extends FunSuite with SharedSparkContext with RDDCompa
     val usersRDD = sc.parallelize(users)
 
     val expectedRDD = sc.parallelize(List(
-      ("12,Eileen,Kilsby,ekilsbyb@apple.com,Female,$9625.42"),
-      ("11,Olenka,Baldacchi,obaldacchia@forbes.com,Female,$9320.61"),
-      ("8,Alix,Plackstone,aplackstone7@ed.gov,Male,$9285.78"),
-      ("2,Sibley,Terne,sterne1@ft.com,Female,$8984.15"),
-      ("18,Itch,Stavers,istaversh@ftc.gov,Male,$8634.44"),
-      ("10,Cleon,felip,cfelip9@homestead.com,Male,$7978.32"),
-      ("15,Jillana,Arckoll,jarckolle@walmart.com,Female,$7922.16"),
-      ("7,Francklyn,Glandfield,fglandfield6@fastcompany.com,Male,$7300.84"),
-      ("6,Pearline,O'Kennavain,pokennavain5@nifty.com,Female,$7287.04"),
-      ("14,Lyn,Mapledoram,lmapledoramd@spotify.com,Female,$7142.35")))
+      "12,Eileen,Kilsby,ekilsbyb@apple.com,Female,$9625.42",
+      "11,Olenka,Baldacchi,obaldacchia@forbes.com,Female,$9320.61",
+      "8,Alix,Plackstone,aplackstone7@ed.gov,Male,$9285.78",
+      "2,Sibley,Terne,sterne1@ft.com,Female,$8984.15",
+      "18,Itch,Stavers,istaversh@ftc.gov,Male,$8634.44",
+      "10,Cleon,felip,cfelip9@homestead.com,Male,$7978.32",
+      "15,Jillana,Arckoll,jarckolle@walmart.com,Female,$7922.16",
+      "7,Francklyn,Glandfield,fglandfield6@fastcompany.com,Male,$7300.84",
+      "6,Pearline,O'Kennavain,pokennavain5@nifty.com,Female,$7287.04",
+      "14,Lyn,Mapledoram,lmapledoramd@spotify.com,Female,$7142.35"))
 
     val job = new BatchFileReader(sc)
     val resultRDD = job.sortUsersBySalary(usersRDD)
