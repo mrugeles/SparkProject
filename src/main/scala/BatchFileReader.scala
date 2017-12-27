@@ -12,7 +12,7 @@ class BatchFileReader(sc: SparkContext){
     val textFile = sc.textFile(getClass.getResource("/users.csv").getPath)
   }
 
-  def getGenderCount(lines: RDD[String]): RDD[(String, AnyVal)]  = {
+  def getGenderCount(lines: RDD[String]): RDD[(String, Float)]  = {
 
     //ej: Array(('male', 45), ('female', 55))
     val gendersRDD = lines.map(
@@ -22,24 +22,39 @@ class BatchFileReader(sc: SparkContext){
       }
     )
 
-
     val countPrep = gendersRDD.map(word=>(word, 1))
     val counts = countPrep.reduceByKey((accumValue, newValue)=>accumValue + newValue)
     val  total = lines.count()
 
     val resultRDD = counts.map(
       line =>{
-        val percentage: AnyVal = line._2*100/total
-        val data = line._1 + ": " + percentage + "%"
-//        println(data)
+        val percentage: Float = line._2*100/total
         (line._1, percentage)
       }
     )
-    resultRDD.foreach{println}
-
-    null
+    resultRDD
   }
 
+  def sortUsersBySalary(usersRDD: RDD[String]): RDD[String] = {
+
+    val salariesRDD = usersRDD.map(
+      line =>{
+        val data = line.split(",")
+        (data(5), line)
+      }
+    )
+
+    val sortedRDD = salariesRDD.sortByKey(false)
+    val resultRDD = sortedRDD.map(
+      line => {
+        (line._2)
+      }
+    )
+
+    val topTenRDD = resultRDD.take(10)
+    sc.parallelize(topTenRDD)
+
+  }
 }
 
 object BatchFileReader {
@@ -49,24 +64,11 @@ object BatchFileReader {
       .setAppName("Batch File Reader")
       .setMaster("local[2]")
       .set("spark.executor.memory", "1g")
+
     val sc = new SparkContext(conf)
-
-
     val job = new BatchFileReader(sc)
-
     job.run()
-//    val textfileMap = textFile.
 
-
-    //val genderMap = textFile.flatMap(line=>line.split(","))
-
-
-//    val countPrep = tokenizedFileData.map(word=>(word, 1))
-//    val counts = countPrep.reduceByKey((accumValue, newValue)=>accumValue + newValue)
-//    val sortedCounts = counts.sortBy(kvPair=>kvPair._2, false)
-
-
-    //textFile.saveAsTextFile("file:///PluralsightData/ReadMeWordCountViaApp")
   }
 
 }
